@@ -1,0 +1,7 @@
+---
+Name: paymentroutes
+After: framework/routes#coreroutes
+---
+Director:
+  rules:
+    'ewayctl/$Action/$ID/$OtherID' : 'eWay_Controller'
