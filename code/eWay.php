@@ -26,16 +26,17 @@ class eWay extends Payment{
 	function processPayment($data, $form) {
 		//var_dump($form);
 		//var_dump($data);
-		
+		$options = array('format' => '#0.00'); //Zend Number:Locale format
 		//prepare to send data to gateway
 		$cart = ShoppingCart::singleton();
 		$order = $cart->current();
-		SS_Log::log( New Exception('Amount is :'.$this->Amount->Nice()), SS_Log::NOTICE );
+	//	SS_Log::log( New Exception('nice currency Amount is :'.$this->Amount->Nice($options). ' amount amount is:'.$this->Amount->Amount), SS_Log::NOTICE );
+		
 		static $ewayurl;
 		$ewayurl.="?CustomerID=91369113";
 		$ewayurl.="&UserName=admin@scubapro.co.nzsand";
-		$ewayurl.="&Amount=1809.00";
-		$ewayurl.="&Currency=AUD";
+		$ewayurl.="&Amount=".$this->Amount->Nice($options);
+		$ewayurl.="&Currency=".Payment::site_currency();
 		$ewayurl.="&PageTitle=MyeWayTitle";
 	    $ewayurl.="&PageDescription=MyeWayDescription";
 		$ewayurl.="&PageFooter=myeWayFooter";	
@@ -62,7 +63,7 @@ class eWay extends Payment{
 		$ewayurl.="&MerchantOption3=";
 		$ewayurl.="&ModifiableCustomerDetails=ModDetails";
 			
-		SS_Log::log( New Exception('eWayURL is :'.$ewayrul), SS_Log::NOTICE );
+		SS_Log::log( New Exception('eWayURL is :'.$ewayurl), SS_Log::NOTICE );
 			
 	    $spacereplace = str_replace(" ", "%20", $ewayurl);	
 	    $posturl="https://au.ewaygateway.com/Request/$spacereplace";
@@ -76,7 +77,7 @@ class eWay extends Payment{
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		
 		$response = curl_exec($ch);
-		SS_Log::log( New Exception($response), SS_Log::NOTICE );
+		//SS_Log::log( New Exception($response), SS_Log::NOTICE );
 		
 		function fetch_data($string, $start_tag, $end_tag)
 		{
@@ -100,6 +101,7 @@ class eWay extends Payment{
 		}
 		else
 		{
+			//this needs to store the response and go back to checkout failure to show the answer(?) and be processed
 		  header("location: eway-failure");
 		  exit;
 		}
