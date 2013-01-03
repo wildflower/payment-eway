@@ -44,7 +44,7 @@ class eWay extends Payment{
 		$ewayurl.="&CompanyName=myeWayCompanyName";
 		$ewayurl.="&CustomerFirstName=".$data['FirstName'];
 	    $ewayurl.="&CustomerLastName=".$data['Surname'];		
-		$ewayurl.="&CustomerAddress=".$data['ShippingAddress'];
+		$ewayurl.="&CustomerAddress=".$data['ShippingAddress']." ".$data['ShippingAddressLine2'];
 		$ewayurl.="&CustomerCity=".$data['ShippingCity'];
 		$ewayurl.="&CustomerState=".$data['ShippingState'];
 		$ewayurl.="&CustomerPostCode=".$data['ShippingPostalCode'];
@@ -52,8 +52,8 @@ class eWay extends Payment{
 		$ewayurl.="&CustomerEmail=".$data['Email'];
 		$ewayurl.="&CustomerPhone=".$data['ShippingPhone'];		
 		$ewayurl.="&InvoiceDescription=".$data['Reference'];
-		$ewayurl.="&CancelURL=mysite.com/ewaysharedpage.php";
-		$ewayurl.="&ReturnUrl=mysite.com/ewayresponse.php";
+		$ewayurl.="&CancelURL=http://silverstripe/ewayctl/cancel/".$data['Reference'];
+		$ewayurl.="&ReturnUrl=http://silverstripe/ewayctl/success/".$data['Reference'];
 		$ewayurl.="&CompanyLogo=myCompanyLogo";
 		$ewayurl.="&PageBanner=myPageBanner";
 		$ewayurl.="&MerchantReference=".$data['Reference'];
@@ -63,11 +63,11 @@ class eWay extends Payment{
 		$ewayurl.="&MerchantOption3=";
 		$ewayurl.="&ModifiableCustomerDetails=ModDetails";
 			
-		SS_Log::log( New Exception('eWayURL is :'.$ewayurl), SS_Log::NOTICE );
+		//SS_Log::log( New Exception('eWayURL is :'.$ewayurl), SS_Log::NOTICE );
 			
 	    $spacereplace = str_replace(" ", "%20", $ewayurl);	
 	    $posturl="https://au.ewaygateway.com/Request/$spacereplace";
-		SS_Log::log( New Exception('PostURL is :'.$posturl), SS_Log::NOTICE );
+		//SS_Log::log( New Exception('PostURL is :'.$posturl), SS_Log::NOTICE );
 		
 	
 		$ch = curl_init();
@@ -160,20 +160,32 @@ class eWay_Controller extends Controller{
 	function failure(){
 		echo "failure in here";
 	}
+	function getAccessPaymentCode()
+	{
+		if($AccessPaymentCode = $this->request->postVar('AccessPaymentCode')){
+			SS_Log::log( New Exception('in getAccessPaymentCode is :'.$AccessPaymentCode), SS_Log::NOTICE );
+		}
+	
+	}
 	
 	function success(){
-		
-		//get payment object, based on some passed parameter
+	SS_Log::log( New Exception('In Success AccessPaymentCode is :'.$AccessPaymentCode), SS_Log::NOTICE );
+		if($AccessPaymentCode = $this->request->postVar('AccessPaymentCode')){
+			SS_Log::log( New Exception('AccessPaymentCode is :'.$AccessPaymentCode), SS_Log::NOTICE );
+		}
+		//get payment object, based on some passed parameter AccessPaymentCode
+		$this->getAccessPaymentCode();
+		//curl to the result URL https://au.ewaygateway.com/Result/?CustomerID=87654321&UserName=TestAccount &AccessPaymentCode=611a5cabc19330f52f9db09e4549c225dda64a71aa8775f53 cafce75c0acff0b611a5cabc19330f52f9db09e4549c225dda64a71aa8775f5asdfalkji323jlJS
 		$payment = $this->payment();
 		
 		if($payment && $obj = $payment->PaidObject()){
 			//redirect to PaymentObject link (eg $order->Link())
-			Director::redirect($obj->Link());
+			Controller->redirect($obj->Link());
 			return;
 		}
 		
 		//else redirect home
-		Director::redirect(Director::absoluteURL('home',true));
+		Controller->redirect(Director::absoluteURL('home',true));
 		return;
 	}
 	
