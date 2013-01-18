@@ -81,8 +81,8 @@ class eWay extends Payment{
 		$ewayurl.="&CustomerEmail=".$data['Email'];
 		$ewayurl.="&CustomerPhone=".$data['ShippingPhone'];		
 		$ewayurl.="&InvoiceDescription=".$data['Reference'];
-		$ewayurl.="&CancelURL=http://silverstripe/ewayctl/cancel/".$data['Reference'];
-		$ewayurl.="&ReturnUrl=http://silverstripe/ewayctl/success/".$data['Reference'];
+		$ewayurl.="&CancelURL=".Director::absoluteBaseURL()."/ewayctl/cancel/".$data['Reference'];
+		$ewayurl.="&ReturnUrl=".Director::absoluteBaseURL()."/ewayctl/success/".$data['Reference'];
 		$ewayurl.="&CompanyLogo=myCompanyLogo";
 		$ewayurl.="&PageBanner=myPageBanner";
 		$ewayurl.="&MerchantReference=".$data['Reference'];
