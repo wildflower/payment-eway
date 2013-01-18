@@ -81,8 +81,8 @@ class eWay extends Payment{
 		$ewayurl.="&CustomerEmail=".$data['Email'];
 		$ewayurl.="&CustomerPhone=".$data['ShippingPhone'];		
 		$ewayurl.="&InvoiceDescription=".$data['Reference'];
-		$ewayurl.="&CancelURL=".Director::absoluteBaseURL()."/ewayctl/cancel/".$data['Reference'];
-		$ewayurl.="&ReturnUrl=".Director::absoluteBaseURL()."/ewayctl/success/".$data['Reference'];
+		$ewayurl.="&CancelURL=".Director::absoluteBaseURL()."ewayctl/cancel/".$data['Reference'];
+		$ewayurl.="&ReturnUrl=".Director::absoluteBaseURL()."ewayctl/success/".$data['Reference'];
 		$ewayurl.="&CompanyLogo=myCompanyLogo";
 		$ewayurl.="&PageBanner=myPageBanner";
 		$ewayurl.="&MerchantReference=".$data['Reference'];
@@ -170,7 +170,7 @@ class eWay_Controller extends Controller{
 		}
 
 		if($id){
-			$p =  DataObject::get_one('payment',"\"OrderID\" = '$id'");
+			$p =  DataObject::get_one('Payment',"\"OrderID\" = '$id'");
 			$this->payment = $p;
 			return $p;
 		}
@@ -186,7 +186,7 @@ class eWay_Controller extends Controller{
 		}
 		
 		if($id){
-			$o =  DataObject::get_one('order',"\"ID\" = '$id'");
+			$o =  DataObject::get_one('Order',"\"ID\" = '$id'");
 			$this->order = $o;
 			return $o;
 		}
